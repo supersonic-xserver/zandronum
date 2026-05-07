@@ -39,7 +39,6 @@ jobs:
           TiMidity++ \
           timidity-patch-fluid \
           timidity-patch-freepats \
-          timidity-init \
           lib64mpg123-devel \
           lib64fluidsynth-devel \
           lib64openssl-devel \

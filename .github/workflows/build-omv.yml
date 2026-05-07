@@ -36,6 +36,10 @@ jobs:
           lib64SDL2_mixer-devel \
           lib64openal-devel \
           lib64sndfile-devel \
+          TiMidity++ \
+          timidity-patch-fluid \
+          timidity-patch-freepats \
+          timidity-init \
           lib64mpg123-devel \
           lib64fluidsynth-devel \
           lib64openssl-devel \
@@ -72,13 +76,16 @@ jobs:
         mkdir build && cd build
         cmake .. \
           -DCMAKE_BUILD_TYPE=Release \
-          -DBUILD_SHARED_LIBS=OFF \
+          -DBUILD_SHARED_LIBS=ON \
           -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+          -Denable-dbus=OFF \
+          -Denable-pulseaudio=OFF \
+          -Denable-readline=OFF \
           -Denable-pkgconfig=ON
         make -j$(nproc)
         make install
-        # Ensure the symlink exists in the system path for the compiler to find during Zandronum's config
-        ln -sf /usr/local/lib64/libfluidsynth.a /usr/local/lib64/libfluidsynth.so.1
+        # Ensure the file exists in the system path for the compiler to find during Zandronum's config
+        cp /usr/local/lib64/libfluidsynth.a /usr/local/lib64/libfluidsynth.so.1
 
     - name: Configure and Build Client
       run: |

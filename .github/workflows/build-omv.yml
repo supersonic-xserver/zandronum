@@ -110,6 +110,14 @@ jobs:
         # Additionally, grab the Samsara and Map files from the root
         cp *.pk3 $DIST_DIR/ 2>/dev/null || :
         cp *.wad $DIST_DIR/ 2>/dev/null || :
+        # Find and copy libfluidsynth (and symlink it to .so.1 if it's newer)
+        cp /usr/lib64/libfluidsynth.so* $DIST_DIR/
+        if [ ! -f $DIST_DIR/libfluidsynth.so.1 ]; then
+           ln -s $(basename $DIST_DIR/libfluidsynth.so.* | head -n 1) $DIST_DIR/libfluidsynth.so.1
+        fi
+        # Copy GTK2-ng libs (usually in /usr/lib or /usr/local/lib)
+        cp /usr/lib/libgtk-x11-2.0.so* $DIST_DIR/libs/ 2>/dev/null || cp /usr/lib64/libgtk-x11-2.0.so* $DIST_DIR/
+        cp /usr/local/lib/libfmodex64-4.26.36.so $DIST_DIR/ 2>/dev/null || :
         # Add a simple launch script for the server
         echo "./zandronum-server -iwad doom2.wad -file zddl4.wad SamsaraReincarnation_v2.2.1-PublicBeta.pk3 +set sv_maxclients 10 +set tdbots_difficulty 4 +set tdbots_precision 95 +set tdbots_reactiontime 0 +set tdb_show_nodes false +set sv_itemrespawn 1 +set sv_noexit 1 +set fraglimit 20 +set timelimit 10 +map map09 +deathmatch 1" > $DIST_DIR/start_samsara_server.sh
         chmod +x $DIST_DIR/start_samsara_server.sh

@@ -70,9 +70,15 @@ jobs:
         cd /tmp/fluidsynth-legacy
         git checkout v1.1.11
         mkdir build && cd build
-        cmake .. -DCMAKE_INSTALL_PREFIX=/usr/local -DLIB_SUFFIX=64
+        cmake .. \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DBUILD_SHARED_LIBS=OFF \
+          -DCMAKE_POSITION_INDEPENDENT_CODE=ON \
+          -Denable-pkgconfig=ON
         make -j$(nproc)
         make install
+        # Ensure the symlink exists in the system path for the compiler to find during Zandronum's config
+        ln -sf /usr/local/lib64/libfluidsynth.a /usr/local/lib64/libfluidsynth.so.1
 
     - name: Configure and Build Client
       run: |
@@ -84,6 +90,8 @@ jobs:
           -DCMAKE_BUILD_TYPE=RelWithDebInfo \
           -DCMAKE_POLICY_DEFAULT_CMP0148=OLD \
           -DOpenGL_GL_PREFERENCE=GLVND \
+          -DFLUIDSYNTH_INCLUDE_DIR=/usr/local/include \
+          -DFLUIDSYNTH_LIBRARIES=/usr/local/lib64/libfluidsynth.a \
           -DCMAKE_CXX_FLAGS="-O2 -fno-strict-aliasing -fcommon -Wno-error" \
           -DCMAKE_EXE_LINKER_FLAGS="-fuse-ld=bfd -Wl,--no-gc-sections -Wl,--no-as-needed -Wl,--undefined=__start_yreg -Wl,--undefined=__start_areg" \
           -DCMAKE_SHARED_LINKER_FLAGS="-fuse-ld=bfd"
